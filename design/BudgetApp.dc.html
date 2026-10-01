@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-64550768-8fbf-476c-92aa-fe6ae4db9cd8/styles.css">
+<script src="_ds/nocturne-64550768-8fbf-476c-92aa-fe6ae4db9cd8/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+<style>html,body{margin:0;background:#07080C}*{box-sizing:border-box}a{color:#A29BFF;text-decoration:none}a:hover{color:#C4BFFF}::-webkit-scrollbar{width:0;height:0}button{font-family:inherit}button:focus-visible{outline:2px solid #6C63FF;outline-offset:2px}</style>
+</helmet>
+<div style="width:100%;height:100%;background:#07080C;color:#F4F4F6;font-family:Inter,system-ui,sans-serif;font-size:14px;position:relative;overflow:hidden;display:flex;font-variant-numeric:tabular-nums">
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+<aside style="width:248px;flex-shrink:0;background:#0C0D11;border-right:1px solid #1A1B21;padding:24px 16px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:center;padding:4px 8px"><img src="assets/mosaique-logo-dark.svg" alt="Mosaïque" style="height:26px;display:block"></div>
+  <button onClick="{{ openAdd }}" style="height:48px;border:0;border-radius:12px;background:#6C63FF;color:#F4F4F6;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:#7B73FF"><i class="icon-plus" style="font-size:18px"></i>Nouvelle transaction</button>
+  <nav style="display:flex;flex-direction:column;gap:4px">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+      <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border:0;border-radius:10px;background:{{ n.bg }};color:{{ n.color }};font-size:14px;font-weight:500;cursor:pointer;text-align:left" style-hover="color:#F4F4F6"><i class="icon-{{ n.icon }}" style="font-size:18px"></i>{{ n.label }}</button>
+    </sc-for>
+  </nav>
+</aside>
+</sc-if>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative">
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+    <div style="height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-weight:600;font-size:15px"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="icon-signal"></i><i class="icon-wifi"></i><i class="icon-battery-full"></i></span></div>
+  </sc-if>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:{{ pad }}">
+  <div style="max-width:1160px;display:flex;flex-direction:column;gap:16px">
+
+  <!-- ACCUEIL -->
+  <sc-if value="{{ sAccueil }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px">
+      <h1 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-0.02em">Accueil</h1>
+      <div style="display:flex;align-items:center;gap:2px;height:38px;padding:0 3px;border-radius:999px;background:#141519;border:1px solid #1F2027">
+        <button style="width:30px;height:30px;border-radius:15px;border:0;background:transparent;color:#8B8D98;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-chevron-left"></i></button>
+        <span style="font-weight:600;min-width:84px;text-align:center">Août 2026</span>
+        <button style="width:30px;height:30px;border-radius:15px;border:0;background:transparent;color:#8B8D98;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-chevron-right"></i></button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;align-items:start">
+      <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="color:#8B8D98;font-size:13px;font-weight:500">Solde total</span>
+          <button onClick="{{ toggleSolde }}" style="height:28px;padding:0 10px;border-radius:999px;border:1px solid #23242B;background:transparent;color:#C9CAD1;font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer" style-hover="background:#1C1D23">Par compte<i class="icon-{{ soldeIcon }}"></i></button>
+        </div>
+        <div style="font-size:34px;font-weight:600;letter-spacing:-0.03em;margin-top:8px">{{ totalBal }}</div>
+        <div style="font-size:13px;color:{{ netColor }};margin-top:4px">{{ netLabel }}</div>
+        <sc-if value="{{ soldeOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:14px;padding-top:6px;border-top:1px solid #1F2027;display:flex;flex-direction:column">
+            <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px;padding:8px 0">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:17px"><i class="icon-{{ a.icon }}"></i></div>
+                <div style="flex:1;min-width:0"><div style="font-weight:500">{{ a.name }}</div><div style="font-size:12px;color:#8B8D98">{{ a.type }}</div></div>
+                <span style="font-weight:600">{{ a.balLabel }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#141519;border:1px solid {{ budgetBorder }};border-radius:20px;padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="color:#8B8D98;font-size:13px;font-weight:500">Budget du mois</span>
+            <span style="height:24px;padding:0 9px;border-radius:999px;background:{{ budgetTagBg }};color:{{ budgetColor }};font-size:12px;font-weight:600;display:flex;align-items:center">{{ budgetPct }}</span>
+          </div>
+          <div style="font-size:12px;color:#8B8D98;margin-top:10px">Reste à dépenser</div>
+          <div style="font-size:28px;font-weight:600;letter-spacing:-0.02em;color:{{ resteColor }};margin-top:2px">{{ resteLabel }}</div>
+          <div style="font-size:12px;color:#8B8D98;margin-top:2px">sur {{ allocLabel }} · 3 jours restants</div>
+          <div style="height:8px;border-radius:4px;background:#23242B;margin-top:14px;overflow:hidden"><div style="height:100%;width:{{ budgetW }};border-radius:4px;background:{{ budgetColor }}"></div></div>
+          <sc-if value="{{ budgetOver }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:8px 10px;border-radius:10px;background:rgba(255,90,95,0.12);color:#FF5A5F;font-size:13px;font-weight:500"><i class="icon-circle-alert" style="font-size:16px"></i>{{ budgetOverLabel }}</div>
+          </sc-if>
+          <div style="font-size:12px;color:#8B8D98;margin-top:14px">Enveloppes les plus consommées</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+            <sc-for list="{{ topEnvs }}" as="e" hint-placeholder-count="3">
+              <span style="height:28px;padding:0 10px;border-radius:999px;background:{{ e.chipBg }};color:{{ e.chipColor }};font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px"><i class="icon-{{ e.icon }}"></i>{{ e.name }} {{ e.pctLabel }}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:#8B8D98;font-size:13px;font-weight:500">Dépenses par catégorie</span><span style="font-size:12px;color:#5C5E69">Août</span></div>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:14px">
+            <div style="position:relative;width:136px;height:136px;flex-shrink:0">{{ donut }}<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:11px;color:#8B8D98">Dépensé</span><span style="font-size:15px;font-weight:600">{{ spentLabel }}</span></div></div>
+            <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ legend }}" as="e" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="width:8px;height:8px;border-radius:4px;background:{{ e.color }};flex-shrink:0"></span><span style="flex:1;color:{{ e.color }};font-weight:500">{{ e.name }}</span><span style="font-weight:600">{{ e.spent }}</span><span style="width:34px;text-align:right;color:#8B8D98;font-size:12px">{{ e.share }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:#8B8D98;font-size:13px;font-weight:500">Prochaines échéances</span><button onClick="{{ goTx }}" style="border:0;background:transparent;color:#A29BFF;font-size:13px;font-weight:500;cursor:pointer;padding:0">Tout voir</button></div>
+          <div style="display:flex;flex-direction:column;margin-top:8px">
+            <sc-for list="{{ upcomingTop }}" as="u" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;padding:8px 0">
+                <div style="width:40px;text-align:center;flex-shrink:0"><div style="font-size:16px;font-weight:600;line-height:1.1">{{ u.dayNum }}</div><div style="font-size:11px;color:#8B8D98">{{ u.mon }}</div></div>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;font-weight:500">{{ u.name }}<span style="width:18px;height:18px;border-radius:6px;background:rgba(108,99,255,0.18);color:#A29BFF;display:inline-flex;align-items:center;justify-content:center;font-size:10px"><i class="icon-refresh-cw"></i></span></div><div style="font-size:12px;color:{{ u.color }};margin-top:1px">{{ u.catName }}</div></div>
+                <span style="font-weight:600;color:{{ u.amtColor }}">{{ u.amount }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:12px;border-top:1px solid #1F2027"><span style="font-size:13px;color:#8B8D98">Encore attendu en août</span><span style="font-weight:600;color:#FF5A5F">{{ augExpected }}</span></div>
+        </div>
+
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:18px;grid-column:{{ wide }}">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:#8B8D98;font-size:13px;font-weight:500">Dernières transactions</span><button onClick="{{ goTx }}" style="border:0;background:transparent;color:#A29BFF;font-size:13px;font-weight:500;cursor:pointer;padding:0">Tout voir</button></div>
+          <div style="display:flex;flex-direction:column;margin-top:6px">
+            <sc-for list="{{ recentTx }}" as="t" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;padding:9px 0">
+                <div style="width:40px;height:40px;border-radius:14px;background:{{ t.tint }};color:{{ t.color }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"><i class="icon-{{ t.icon }}"></i></div>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;font-weight:500">{{ t.name }}<sc-if value="{{ t.rec }}" hint-placeholder-val="{{ false }}"><span style="width:18px;height:18px;border-radius:6px;background:rgba(108,99,255,0.18);color:#A29BFF;display:inline-flex;align-items:center;justify-content:center;font-size:10px"><i class="icon-refresh-cw"></i></span></sc-if></div><div style="font-size:12px;color:#8B8D98;margin-top:2px"><span style="color:{{ t.color }}">{{ t.catName }}</span> · {{ t.account }}</div></div>
+                <div style="text-align:right"><div style="font-weight:600;color:{{ t.amtColor }}">{{ t.amount }}</div><div style="font-size:12px;color:#5C5E69;margin-top:2px">{{ t.dateShort }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:40px 24px;grid-column:{{ wide }};display:flex;flex-direction:column;align-items:flex-start;gap:12px">
+          <div style="width:56px;height:56px;border-radius:20px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:26px"><i class="icon-sprout"></i></div>
+          <div style="font-size:20px;font-weight:600;margin-top:4px">Aucune donnée pour août 2026</div>
+          <div style="color:#8B8D98;line-height:1.5;max-width:420px;text-wrap:pretty">Ajoutez votre première transaction ou créez une enveloppe de budget : vos soldes, graphiques et échéances apparaîtront ici.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button onClick="{{ openAdd }}" style="height:44px;padding:0 16px;border-radius:12px;border:0;background:#6C63FF;color:#F4F4F6;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer"><i class="icon-plus"></i>Ajouter une transaction</button>
+            <button onClick="{{ goBudget }}" style="height:44px;padding:0 16px;border-radius:12px;border:1px solid #2A2B33;background:transparent;color:#F4F4F6;font-weight:500;cursor:pointer" style-hover="background:#1C1D23">Créer une enveloppe</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- TRANSACTIONS -->
+  <sc-if value="{{ sTx }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px">
+      <h1 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-0.02em">Transactions</h1>
+      <button onClick="{{ openAdd }}" style="height:40px;padding:0 14px;border-radius:12px;border:0;background:#6C63FF;color:#F4F4F6;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer" style-hover="background:#7B73FF"><i class="icon-plus" style="font-size:16px"></i>Ajouter</button>
+    </div>
+    <div style="height:44px;border-radius:12px;background:#141519;border:1px solid #1F2027;display:flex;align-items:center;gap:10px;padding:0 14px;color:#5C5E69"><i class="icon-search" style="font-size:17px"></i><span>Rechercher une transaction, une note…</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:{{ chipWrap }};overflow-x:auto;margin:0 -2px;padding:0 2px">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+        <button style="height:36px;padding:0 12px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;cursor:pointer" style-hover="background:#1C1D23"><i class="icon-{{ f.icon }}" style="font-size:14px"></i>{{ f.label }}<i class="icon-chevron-down" style="font-size:14px;color:#5C5E69"></i></button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ hasUpcoming }}" hint-placeholder-val="{{ true }}">
+    <div style="background:#141519;border:1px solid #1F2027;border-radius:20px">
+      <button onClick="{{ toggleUp }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:14px 16px;border:0;background:transparent;color:#F4F4F6;cursor:pointer;text-align:left">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(108,99,255,0.18);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:14px"><i class="icon-refresh-cw"></i></span>
+        <span style="font-weight:600">À venir</span>
+        <span style="font-size:12px;color:#8B8D98;flex:1">{{ upCount }} · 30 prochains jours</span>
+        <span style="font-weight:600;font-size:13px;color:{{ upTotalColor }}">{{ upTotal }}</span>
+        <i class="icon-{{ upIcon }}" style="font-size:16px;color:#8B8D98"></i>
+      </button>
+      <sc-if value="{{ upOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="border-top:1px solid #1F2027;padding:4px 16px 8px;display:flex;flex-direction:column">
+          <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;opacity:0.55">
+              <div style="width:40px;text-align:center;flex-shrink:0"><div style="font-size:15px;font-weight:600;line-height:1.1">{{ u.dayNum }}</div><div style="font-size:11px;color:#8B8D98">{{ u.mon }}</div></div>
+              <div style="width:32px;height:32px;border-radius:10px;background:{{ u.tint }};color:{{ u.color }};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0"><i class="icon-{{ u.icon }}"></i></div>
+              <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;font-weight:500">{{ u.name }}<span style="width:18px;height:18px;border-radius:6px;background:rgba(108,99,255,0.25);color:#A29BFF;display:inline-flex;align-items:center;justify-content:center;font-size:10px"><i class="icon-refresh-cw"></i></span></div><div style="font-size:12px;color:#8B8D98">{{ u.meta }}</div></div>
+              <span style="font-weight:600;color:{{ u.amtColor }}">{{ u.amount }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ txMobile }}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#8B8D98;padding:4px 4px 0"><span style="font-weight:500">{{ g.label }}</span><span>{{ g.total }}</span></div>
+          <div style="background:#1F2027;border:1px solid #1F2027;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+            <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="2">
+              <div style="position:relative;overflow:hidden">
+                <div style="position:absolute;top:0;right:0;bottom:0;width:76px;background:#FF5A5F;color:#F4F4F6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600"><i class="icon-trash-2" style="font-size:18px"></i>Supprimer</div>
+                <div onClick="{{ t.onSwipe }}" style="position:relative;background:#141519;display:flex;align-items:center;gap:12px;padding:12px 14px;transform:{{ t.shift }};cursor:pointer">
+                  <div style="width:40px;height:40px;border-radius:14px;background:{{ t.tint }};color:{{ t.color }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"><i class="icon-{{ t.icon }}"></i></div>
+                  <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;font-weight:500">{{ t.name }}<sc-if value="{{ t.rec }}" hint-placeholder-val="{{ false }}"><span style="width:18px;height:18px;border-radius:6px;background:rgba(108,99,255,0.18);color:#A29BFF;display:inline-flex;align-items:center;justify-content:center;font-size:10px"><i class="icon-refresh-cw"></i></span></sc-if></div><div style="font-size:12px;color:#8B8D98;margin-top:2px"><span style="color:{{ t.color }}">{{ t.catName }}</span> · {{ t.account }}</div></div>
+                  <div style="text-align:right"><div style="font-weight:600;color:{{ t.amtColor }}">{{ t.amount }}</div><div style="font-size:12px;color:#5C5E69;margin-top:2px">{{ t.time }}</div></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ txDesktop }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#1F2027;border:1px solid #1F2027;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+        <div style="display:grid;grid-template-columns:130px minmax(0,2fr) minmax(0,1.4fr) minmax(0,1fr) 130px 44px;gap:16px;align-items:center;padding:12px 18px;background:#101115;font-size:12px;color:#8B8D98;font-weight:500"><span>Date</span><span>Libellé</span><span>Catégorie</span><span>Compte</span><span style="text-align:right">Montant</span><span></span></div>
+        <sc-for list="{{ txs }}" as="t" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:130px minmax(0,2fr) minmax(0,1.4fr) minmax(0,1fr) 130px 44px;gap:16px;align-items:center;padding:10px 18px;background:#141519" style-hover="background:#17181D">
+            <div><div style="font-weight:500">{{ t.dateShort }}</div><div style="font-size:12px;color:#5C5E69">{{ t.time }}</div></div>
+            <div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="width:34px;height:34px;border-radius:10px;background:{{ t.tint }};color:{{ t.color }};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="icon-{{ t.icon }}"></i></div><span style="font-weight:500">{{ t.name }}</span><sc-if value="{{ t.rec }}" hint-placeholder-val="{{ false }}"><span style="width:18px;height:18px;border-radius:6px;background:rgba(108,99,255,0.18);color:#A29BFF;display:inline-flex;align-items:center;justify-content:center;font-size:10px"><i class="icon-refresh-cw"></i></span></sc-if></div>
+            <div style="font-size:13px"><span style="color:{{ t.color }};font-weight:500">{{ t.catName }}</span><span style="color:#8B8D98"> · {{ t.subName }}</span></div>
+            <div style="font-size:13px;color:#C9CAD1">{{ t.account }}</div>
+            <div style="text-align:right;font-weight:600;color:{{ t.amtColor }}">{{ t.amount }}</div>
+            <button style="width:32px;height:32px;border-radius:8px;border:0;background:transparent;color:#FF5A5F;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0.75" style-hover="background:rgba(255,90,95,0.14);opacity:1"><i class="icon-trash-2"></i></button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:40px 24px;display:flex;flex-direction:column;gap:10px">
+        <div style="width:48px;height:48px;border-radius:14px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:22px"><i class="icon-receipt"></i></div>
+        <div style="font-size:17px;font-weight:600">Aucune transaction en août 2026</div>
+        <div style="color:#8B8D98">Vos dépenses, revenus et virements s’afficheront ici, groupés par jour.</div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- BUDGET -->
+  <sc-if value="{{ sBudget }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px">
+      <h1 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-0.02em">Budget</h1>
+      <button onClick="{{ openEnv }}" style="height:40px;padding:0 14px;border-radius:12px;border:0;background:#6C63FF;color:#F4F4F6;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer" style-hover="background:#7B73FF"><i class="icon-plus" style="font-size:16px"></i>Enveloppe</button>
+    </div>
+    <div style="background:#141519;border:1px solid {{ budgetBorder }};border-radius:20px;padding:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="color:#8B8D98;font-size:13px;font-weight:500">Budget total du mois · Août 2026</span><span style="height:24px;padding:0 9px;border-radius:999px;background:{{ budgetTagBg }};color:{{ budgetColor }};font-size:12px;font-weight:600;display:flex;align-items:center">{{ budgetPctLong }}</span></div>
+      <div style="font-size:34px;font-weight:600;letter-spacing:-0.03em;margin-top:8px">{{ allocLabel }}</div>
+      <div style="font-size:12px;color:#8B8D98;margin-top:2px">{{ allocSub }}</div>
+      <div style="display:flex;gap:4px;margin-top:18px;height:12px">
+        <sc-for list="{{ mosaic }}" as="e" hint-placeholder-count="5"><div style="flex:{{ e.allocN }} 1 0;min-width:6px;border-radius:6px;background:{{ e.trackBg }};overflow:hidden"><div style="height:100%;width:{{ e.barW }};border-radius:6px;background:{{ e.barColor }}"></div></div></sc-for>
+        <div style="flex:{{ unallocN }} 1 0;border-radius:6px;border:1px dashed #34353F"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:#8B8D98"><span>Alloué {{ allocLabel }}</span><span>Non alloué {{ unallocLabel }}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid #1F2027">
+        <div><div style="font-size:12px;color:#8B8D98">Dépensé</div><div style="font-size:17px;font-weight:600;margin-top:2px">{{ spentLabel }}</div></div>
+        <div><div style="font-size:12px;color:#8B8D98">{{ resteTitle }}</div><div style="font-size:17px;font-weight:600;margin-top:2px;color:{{ resteColor }}">{{ resteAbs }}</div></div>
+      </div>
+    </div>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px"><span style="font-size:17px;font-weight:600">Enveloppes</span><span style="font-size:12px;color:#5C5E69">Surface = montant alloué · remplissage = dépensé</span></div>
+    <div style="display:grid;grid-template-columns:{{ mosaicCols }};grid-auto-rows:{{ mosaicRow }};grid-auto-flow:dense;gap:10px">
+      <sc-for list="{{ mosaic }}" as="e" hint-placeholder-count="5">
+        <div style="position:relative;grid-column:span {{ e.cs }};grid-row:span {{ e.rs }};min-width:0">
+          <div style="position:absolute;inset:0;border-radius:22px;overflow:hidden;background:{{ e.tileBg }};border:1px solid {{ e.tileBorder }}">
+            <div style="position:absolute;left:0;right:0;bottom:0;height:{{ e.fillH }};background:{{ e.fillBg }};border-top:2px solid {{ e.barColor }}"></div>
+          </div>
+          <div style="position:relative;height:100%;padding:14px 14px 16px 16px;display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:8px">
+              <i class="icon-{{ e.icon }}" style="font-size:16px;color:{{ e.color }}"></i>
+              <span style="flex:1;min-width:0;font-weight:600;color:{{ e.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.name }}</span>
+              <button onClick="{{ e.toggleMenu }}" style="width:30px;height:30px;border-radius:10px;border:0;background:rgba(7,8,12,0.35);color:#C9CAD1;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" style-hover="background:rgba(7,8,12,0.6);color:#F4F4F6"><i class="icon-ellipsis-vertical"></i></button>
+            </div>
+            <sc-if value="{{ e.menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:48px;right:12px;z-index:5;background:#1C1D23;border:1px solid #2F3039;border-radius:14px;padding:6px;display:flex;flex-direction:column;min-width:170px">
+                <button onClick="{{ openEnv }}" style="height:38px;padding:0 10px;border:0;border-radius:9px;background:transparent;color:#F4F4F6;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:#23242B"><i class="icon-pencil" style="color:#8B8D98"></i>Modifier</button>
+                <button style="height:38px;padding:0 10px;border:0;border-radius:9px;background:transparent;color:#FF5A5F;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:rgba(255,90,95,0.12)"><i class="icon-trash-2"></i>Supprimer</button>
+              </div>
+            </sc-if>
+            <div style="flex:1"></div>
+            <sc-if value="{{ e.over }}" hint-placeholder-val="{{ false }}">
+              <span style="align-self:flex-start;height:24px;padding:0 9px;border-radius:999px;background:#FF5A5F;color:#07080C;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:8px"><i class="icon-circle-alert"></i>{{ e.overShort }}</span>
+            </sc-if>
+            <div style="font-size:{{ e.pctSize }};font-weight:600;letter-spacing:-0.04em;line-height:1">{{ e.pctLabel }}</div>
+            <div style="font-size:12px;color:#D5D6DC;margin-top:8px">{{ e.spent }} <span style="color:#8B8D98">sur {{ e.alloc }}</span></div>
+            <sc-if value="{{ e.big }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8B8D98;margin-top:2px">{{ e.revPct }} · {{ e.restShort }}</div></sc-if>
+          </div>
+        </div>
+      </sc-for>
+      <button onClick="{{ openEnv }}" style="border-radius:22px;border:1px dashed #34353F;background:transparent;color:#8B8D98;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:16px;cursor:pointer;text-align:left" style-hover="border-color:#6C63FF;color:#C4BFFF">
+        <span style="width:34px;height:34px;border-radius:12px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:18px"><i class="icon-plus"></i></span>
+        <span><span style="display:block;font-weight:600;color:#F4F4F6">Nouvelle enveloppe</span><span style="display:block;font-size:12px;margin-top:2px">Ajouter une tuile</span></span>
+      </button>
+      <div style="grid-column:span 2;border-radius:22px;border:1px dashed #34353F;padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+        <span style="display:flex;align-items:center;gap:8px;color:#8B8D98;font-weight:500"><i class="icon-layers"></i>Non alloué</span>
+        <span><span style="display:block;font-size:30px;font-weight:600;letter-spacing:-0.03em">{{ unallocLabel }}</span><span style="display:block;font-size:12px;color:#8B8D98;margin-top:6px">{{ unallocSub }}</span></span>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ envs }}" as="e" hint-placeholder-count="5">
+          <div style="position:relative;background:#141519;border:1px solid {{ e.border }};border-radius:20px;padding:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <span style="font-size:15px;font-weight:600;color:{{ e.color }}">{{ e.name }}</span>
+              <button onClick="{{ e.toggleMenu }}" style="width:30px;height:30px;border-radius:10px;border:0;background:transparent;color:#8B8D98;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:-6px" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-ellipsis-vertical"></i></button>
+            </div>
+            <sc-if value="{{ e.menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:46px;right:12px;z-index:5;background:#1C1D23;border:1px solid #2F3039;border-radius:14px;padding:6px;display:flex;flex-direction:column;min-width:170px">
+                <button onClick="{{ openEnv }}" style="height:38px;padding:0 10px;border:0;border-radius:9px;background:transparent;color:#F4F4F6;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:#23242B"><i class="icon-pencil" style="color:#8B8D98"></i>Modifier</button>
+                <button style="height:38px;padding:0 10px;border:0;border-radius:9px;background:transparent;color:#FF5A5F;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:rgba(255,90,95,0.12)"><i class="icon-trash-2"></i>Supprimer</button>
+              </div>
+            </sc-if>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:6px">
+              <span style="font-size:26px;font-weight:600;letter-spacing:-0.02em">{{ e.alloc }}</span>
+              <span style="font-size:13px;font-weight:600;color:{{ e.mPctColor }}">{{ e.pctLabel }}</span>
+            </div>
+            <div style="height:6px;border-radius:3px;background:#23242B;margin-top:12px;overflow:hidden"><div style="height:100%;width:{{ e.barW }};border-radius:3px;background:{{ e.mBar }}"></div></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:10px;font-size:12px">
+              <span style="color:#8B8D98">{{ e.spent }} dépensés</span>
+              <sc-if value="{{ e.notOver }}" hint-placeholder-val="{{ true }}"><span style="color:#D5D6DC;font-weight:500">{{ e.restLabel }} restants</span></sc-if>
+              <sc-if value="{{ e.over }}" hint-placeholder-val="{{ false }}"><span style="color:#FF5A5F;font-weight:600">{{ e.overLabel }}</span></sc-if>
+            </div>
+          </div>
+        </sc-for>
+        <button onClick="{{ openEnv }}" style="height:52px;border-radius:20px;border:1px dashed #34353F;background:transparent;color:#C4BFFF;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><i class="icon-plus"></i>Créer une enveloppe</button>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- PARAMETRES -->
+  <sc-if value="{{ sParams }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;min-height:44px"><h1 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-0.02em">Paramètres</h1></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));gap:20px 16px;align-items:start">
+      <sc-for list="{{ settings }}" as="grp" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:500;color:#8B8D98;padding:0 4px;letter-spacing:0.02em">{{ grp.title }}</span>
+          <div style="background:#1F2027;border:1px solid #1F2027;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+            <sc-for list="{{ grp.rows }}" as="r" hint-placeholder-count="3">
+              <button onClick="{{ r.go }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:#141519;color:#F4F4F6;text-align:left;cursor:pointer;width:100%" style-hover="background:#18191E">
+                <span style="width:36px;height:36px;border-radius:10px;background:{{ r.iconBg }};color:{{ r.iconColor }};display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0"><i class="icon-{{ r.icon }}"></i></span>
+                <span style="flex:1;min-width:0"><span style="display:block;font-weight:500;color:{{ r.labelColor }}">{{ r.label }}</span><span style="display:block;font-size:12px;color:#8B8D98;margin-top:2px">{{ r.sub }}</span></span>
+                <sc-if value="{{ r.value }}" hint-placeholder-val="{{ false }}"><span style="font-weight:600;font-size:13px;white-space:nowrap">{{ r.value }}</span></sc-if>
+                <sc-if value="{{ r.tag }}" hint-placeholder-val="{{ false }}"><span style="height:22px;padding:0 8px;border-radius:999px;background:#23242B;color:#8B8D98;font-size:11px;display:flex;align-items:center;gap:4px"><i class="icon-lock"></i>{{ r.tag }}</span></sc-if>
+                <i class="icon-{{ r.trail }}" style="font-size:16px;color:#5C5E69"></i>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- CATEGORIES -->
+  <sc-if value="{{ sCats }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;min-height:44px">
+      <button onClick="{{ goParams }}" style="width:40px;height:40px;border-radius:12px;border:1px solid #23242B;background:#141519;color:#F4F4F6;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><i class="icon-chevron-left"></i></button>
+      <h1 style="margin:0;font-size:22px;font-weight:600;letter-spacing:-0.02em;flex:1">Catégories</h1>
+      <button onClick="{{ openCat }}" style="height:40px;padding:0 14px;border-radius:12px;border:0;background:#6C63FF;color:#F4F4F6;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer"><i class="icon-plus" style="font-size:16px"></i>Groupe</button>
+    </div>
+    <div style="font-size:13px;color:#8B8D98">6 groupes · 18 sous-catégories. Chaque groupe a son icône et sa couleur, reprises partout dans l’app.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:12px;background:{{ c.tint }};color:{{ c.color }};display:flex;align-items:center;justify-content:center;font-size:18px"><i class="icon-{{ c.icon }}"></i></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:600;color:{{ c.color }}">{{ c.name }}</div><div style="font-size:12px;color:#8B8D98">{{ c.count }}</div></div>
+            <button onClick="{{ openCat }}" style="width:32px;height:32px;border-radius:8px;border:0;background:transparent;color:#8B8D98;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-pencil"></i></button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+            <sc-for list="{{ c.subs }}" as="s" hint-placeholder-count="3">
+              <span style="height:30px;padding:0 12px;border-radius:999px;background:#1C1D23;color:#D5D6DC;font-size:13px;display:flex;align-items:center">{{ s }}</span>
+            </sc-for>
+            <span style="height:30px;padding:0 12px;border-radius:999px;border:1px dashed #2F3039;color:#8B8D98;font-size:13px;display:flex;align-items:center;gap:4px"><i class="icon-plus"></i>Sous-catégorie</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- COMPTES -->
+  <sc-if value="{{ sComptes }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;min-height:44px">
+      <button onClick="{{ goParams }}" style="width:40px;height:40px;border-radius:12px;border:1px solid #23242B;background:#141519;color:#F4F4F6;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><i class="icon-chevron-left"></i></button>
+      <h1 style="margin:0;font-size:22px;font-weight:600;letter-spacing:-0.02em">Comptes</h1>
+    </div>
+    <div style="font-size:13px;color:#8B8D98;text-wrap:pretty">Le solde initial est le point de départ du calcul : solde actuel = solde initial + revenus − dépenses ± virements.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+      <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="3">
+        <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;border-radius:12px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="icon-{{ a.icon }}"></i></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:600">{{ a.name }}</div><div style="font-size:12px;color:#8B8D98">{{ a.type }}</div></div>
+            <button onClick="{{ a.onEdit }}" style="width:32px;height:32px;border-radius:8px;border:0;background:transparent;color:#8B8D98;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-pencil"></i></button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid #1F2027">
+            <div><div style="font-size:12px;color:#8B8D98">Solde initial</div><div style="font-weight:600;margin-top:2px">{{ a.initLabel }}</div></div>
+            <div><div style="font-size:12px;color:#8B8D98">Solde actuel</div><div style="font-weight:600;margin-top:2px;font-size:16px">{{ a.balLabel }}</div></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- RECURRENTES -->
+  <sc-if value="{{ sRec }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;min-height:44px">
+      <button onClick="{{ goParams }}" style="width:40px;height:40px;border-radius:12px;border:1px solid #23242B;background:#141519;color:#F4F4F6;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><i class="icon-chevron-left"></i></button>
+      <h1 style="margin:0;font-size:22px;font-weight:600;letter-spacing:-0.02em;flex:1">Transactions récurrentes</h1>
+    </div>
+    <sc-if value="{{ hasRules }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:13px;color:#8B8D98">{{ rulesSummary }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(420px,100%),1fr));gap:8px 16px">
+        <sc-for list="{{ rules }}" as="r" hint-placeholder-count="8">
+          <div style="position:relative;background:#141519;border:1px solid #1F2027;border-radius:20px;padding:12px 12px 12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:12px;background:{{ r.tint }};color:{{ r.color }};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;opacity:{{ r.opacity }}"><i class="icon-{{ r.icon }}"></i></div>
+            <div style="flex:1;min-width:0;opacity:{{ r.opacity }}">
+              <div style="font-weight:500">{{ r.name }}</div>
+              <div style="font-size:12px;color:#8B8D98;margin-top:2px">{{ r.freq }}</div>
+              <div style="font-size:12px;color:{{ r.nextColor }};margin-top:2px">{{ r.nextLabel }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+              <span style="font-weight:600;color:{{ r.amtColor }};opacity:{{ r.opacity }}">{{ r.amount }}</span>
+              <div style="display:flex;align-items:center;gap:4px">
+                <button onClick="{{ r.toggle }}" style="width:40px;height:24px;border-radius:12px;border:0;padding:0;background:{{ r.tBg }};position:relative;cursor:pointer"><span style="position:absolute;top:3px;left:{{ r.tLeft }};width:18px;height:18px;border-radius:9px;background:#F4F4F6"></span></button>
+                <button onClick="{{ r.toggleMenu }}" style="width:28px;height:28px;border-radius:8px;border:0;background:transparent;color:#8B8D98;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#1C1D23;color:#F4F4F6"><i class="icon-ellipsis-vertical"></i></button>
+              </div>
+            </div>
+            <sc-if value="{{ r.menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:calc(100% - 8px);right:10px;z-index:5;background:#1C1D23;border:1px solid #2A2B33;border-radius:12px;padding:6px;display:flex;flex-direction:column;min-width:190px">
+                <button onClick="{{ r.edit }}" style="height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#F4F4F6;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:#23242B"><i class="icon-pencil" style="color:#8B8D98"></i>Modifier</button>
+                <button onClick="{{ r.toggle }}" style="height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#F4F4F6;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:#23242B"><i class="icon-{{ r.pauseIcon }}" style="color:#8B8D98"></i>{{ r.pauseLabel }}</button>
+                <button style="height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#FF5A5F;display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer" style-hover="background:rgba(255,90,95,0.12)"><i class="icon-trash-2"></i>Supprimer</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ openRule }}" style="height:48px;border-radius:12px;border:1px solid #6C63FF;background:transparent;color:#C4BFFF;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;max-width:420px;width:100%" style-hover="background:rgba(108,99,255,0.12)"><i class="icon-plus"></i>Ajouter une récurrence</button>
+    </sc-if>
+    <sc-if value="{{ rulesEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#141519;border:1px solid #1F2027;border-radius:20px;padding:40px 24px;display:flex;flex-direction:column;gap:12px;max-width:560px">
+        <div style="width:56px;height:56px;border-radius:20px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:24px"><i class="icon-refresh-cw"></i></div>
+        <div style="font-size:19px;font-weight:600;margin-top:4px">Aucune transaction récurrente</div>
+        <div style="color:#8B8D98;line-height:1.5;text-wrap:pretty">Automatisez le loyer, les abonnements, le salaire ou l’épargne : chaque échéance apparaîtra dans « À venir » avant d’être enregistrée.</div>
+        <button onClick="{{ openRule }}" style="align-self:flex-start;height:44px;padding:0 16px;border-radius:12px;border:0;background:#6C63FF;color:#F4F4F6;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px"><i class="icon-plus"></i>Ajouter une récurrence</button>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  </div>
+  </div>
+
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+    <div style="flex-shrink:0;height:84px;background:#0C0D11;border-top:1px solid #1A1B21;display:grid;grid-template-columns:repeat(5,1fr);align-items:start;padding:8px 6px 0">
+      <sc-for list="{{ tabsL }}" as="n" hint-placeholder-count="2">
+        <button onClick="{{ n.go }}" style="height:48px;border:0;background:transparent;color:{{ n.tab }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:500;cursor:pointer"><i class="icon-{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}</button>
+      </sc-for>
+      <div style="display:flex;justify-content:center"><button onClick="{{ openAdd }}" style="width:58px;height:58px;margin-top:-26px;border-radius:29px;border:4px solid #07080C;background:#6C63FF;color:#F4F4F6;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#7B73FF"><i class="icon-plus"></i></button></div>
+      <sc-for list="{{ tabsR }}" as="n" hint-placeholder-count="2">
+        <button onClick="{{ n.go }}" style="height:48px;border:0;background:transparent;color:{{ n.tab }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:500;cursor:pointer"><i class="icon-{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}</button>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+
+<!-- OVERLAY -->
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:20;background:rgba(3,4,8,0.72);display:flex;flex-direction:column;justify-content:{{ ovJustify }};align-items:center">
+  <div onClick="{{ close }}" style="position:absolute;inset:0"></div>
+  <div style="position:relative;width:{{ sheetW }};max-height:{{ sheetH }};overflow-y:auto;background:#141519;border:1px solid #23242B;border-radius:{{ sheetR }};padding:{{ sheetPad }};display:flex;flex-direction:column;gap:16px">
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}"><div style="width:40px;height:4px;border-radius:2px;background:#2F3039;align-self:center;margin-top:-6px"></div></sc-if>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="flex:1;font-size:18px;font-weight:600">{{ sheetTitle }}</span>
+      <button onClick="{{ close }}" style="width:36px;height:36px;border-radius:10px;border:0;background:#1C1D23;color:#C9CAD1;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="icon-x"></i></button>
+    </div>
+
+    <!-- FORM transaction / règle -->
+    <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:#0C0D11">
+        <sc-for list="{{ types }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.pick }}" style="height:36px;border:0;border-radius:9px;background:{{ t.bg }};color:{{ t.color }};font-size:13px;font-weight:600;cursor:pointer">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 4px">
+        <span style="font-size:12px;color:#8B8D98">Montant</span>
+        <span style="font-size:42px;font-weight:600;letter-spacing:-0.03em;color:{{ f.amtColor }}">{{ f.amount }}</span>
+      </div>
+      <div style="background:#1F2027;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+        <sc-if value="{{ f.notVir }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#1A1B20">
+            <span style="width:34px;height:34px;border-radius:10px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:16px"><i class="icon-{{ f.accIcon }}"></i></span>
+            <div style="flex:1"><div style="font-size:12px;color:#8B8D98">Compte</div><div style="font-weight:500">{{ f.accName }}</div></div>
+            <i class="icon-chevron-right" style="color:#5C5E69"></i>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:12px 14px;background:#1A1B20">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="width:34px;height:34px;border-radius:10px;background:{{ f.catTint }};color:{{ f.catColor }};display:flex;align-items:center;justify-content:center;font-size:16px"><i class="icon-{{ f.catIcon }}"></i></span>
+              <div style="flex:1"><div style="font-size:12px;color:#8B8D98">Catégorie</div><div style="font-weight:600;color:{{ f.catColor }}">{{ f.catName }}</div></div>
+              <i class="icon-chevron-right" style="color:#5C5E69"></i>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ subChips }}" as="c" hint-placeholder-count="3">
+                <button onClick="{{ c.pick }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:500;cursor:pointer">{{ c.name }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ f.isVir }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);align-items:center;gap:8px;padding:12px;background:#1A1B20">
+            <div style="padding:12px;border-radius:12px;background:#141519;border:1px solid #23242B"><div style="font-size:12px;color:#8B8D98">Depuis</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-weight:600"><i class="icon-landmark" style="color:#A29BFF"></i>Banque</div><div style="font-size:12px;color:#8B8D98;margin-top:2px">{{ f.fromBal }}</div></div>
+            <span style="width:32px;height:32px;border-radius:20px;background:rgba(108,99,255,0.18);color:#A29BFF;display:flex;align-items:center;justify-content:center"><i class="icon-arrow-right"></i></span>
+            <div style="padding:12px;border-radius:12px;background:#141519;border:1px solid #23242B"><div style="font-size:12px;color:#8B8D98">Vers</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-weight:600"><i class="icon-wallet" style="color:#A29BFF"></i>Cash</div><div style="font-size:12px;color:#8B8D98;margin-top:2px">{{ f.toBal }}</div></div>
+          </div>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#1A1B20">
+          <span style="width:34px;height:34px;border-radius:10px;background:#23242B;color:#C9CAD1;display:flex;align-items:center;justify-content:center;font-size:16px"><i class="icon-calendar"></i></span>
+          <div style="flex:1"><div style="font-size:12px;color:#8B8D98">Date et heure</div><div style="font-weight:500">{{ f.dateLabel }}</div></div>
+          <i class="icon-chevron-right" style="color:#5C5E69"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#1A1B20">
+          <span style="width:34px;height:34px;border-radius:10px;background:#23242B;color:#C9CAD1;display:flex;align-items:center;justify-content:center;font-size:16px"><i class="icon-notebook-pen"></i></span>
+          <div style="flex:1"><div style="font-size:12px;color:#8B8D98">Note</div><div style="font-weight:500">{{ f.note }}</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;padding:12px 14px;background:#1A1B20">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:34px;height:34px;border-radius:10px;background:rgba(108,99,255,0.16);color:#A29BFF;display:flex;align-items:center;justify-content:center;font-size:16px"><i class="icon-refresh-cw"></i></span>
+            <span style="flex:1;font-weight:500">Répéter cette transaction</span>
+            <button onClick="{{ f.toggleRecur }}" style="width:40px;height:24px;border-radius:12px;border:0;padding:0;background:{{ f.tBg }};position:relative;cursor:pointer;flex-shrink:0"><span style="position:absolute;top:3px;left:{{ f.tLeft }};width:18px;height:18px;border-radius:9px;background:#F4F4F6"></span></button>
+          </div>
+          <sc-if value="{{ f.recur }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;padding-top:12px;border-top:1px solid #23242B">
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#8B8D98">Fréquence</span>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ freqs }}" as="c" hint-placeholder-count="3">
+                    <button onClick="{{ c.pick }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:500;cursor:pointer">{{ c.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div style="font-size:12px;color:#8B8D98">Jour de la récurrence</div><div style="font-size:11px;color:#5C5E69;margin-top:1px">Proposé d’après la date choisie</div></div><span style="height:32px;padding:0 12px;border-radius:10px;background:#23242B;font-weight:500;font-size:13px;display:flex;align-items:center;gap:6px">{{ f.dayRec }}<i class="icon-chevron-down" style="color:#8B8D98"></i></span></div>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#8B8D98">Fin</span>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ ends }}" as="c" hint-placeholder-count="2">
+                    <button onClick="{{ c.pick }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:500;cursor:pointer">{{ c.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:rgba(108,99,255,0.12);color:#C4BFFF;font-size:13px;line-height:1.45"><i class="icon-info" style="font-size:15px;margin-top:1px"></i><span>{{ f.summary }}</span></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ f.isRegle }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;color:#8B8D98;padding:0 2px">Appliquer les modifications</span>
+          <sc-for list="{{ applyOpts }}" as="o" hint-placeholder-count="2">
+            <button onClick="{{ o.pick }}" style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid {{ o.border }};background:{{ o.bg }};color:#F4F4F6;text-align:left;cursor:pointer">
+              <span style="width:18px;height:18px;border-radius:9px;border:2px solid {{ o.ring }};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="width:8px;height:8px;border-radius:4px;background:{{ o.dot }}"></span></span>
+              <span><span style="display:block;font-weight:500">{{ o.label }}</span><span style="display:block;font-size:12px;color:#8B8D98;margin-top:2px">{{ o.sub }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <button onClick="{{ close }}" style="height:52px;flex-shrink:0;border:0;border-radius:14px;background:#6C63FF;color:#F4F4F6;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#7B73FF">{{ f.cta }}</button>
+      <sc-if value="{{ f.isRegle }}" hint-placeholder-val="{{ false }}">
+        <button style="height:40px;flex-shrink:0;border:0;border-radius:12px;background:transparent;color:#FF5A5F;font-weight:500;cursor:pointer;margin-top:-8px" style-hover="background:rgba(255,90,95,0.1)">Supprimer la règle</button>
+      </sc-if>
+    </sc-if>
+
+    <!-- ENVELOPPE -->
+    <sc-if value="{{ isEnv }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;padding:4px 0">
+        <span style="font-size:12px;color:#8B8D98">Montant alloué par mois</span>
+        <span style="font-size:42px;font-weight:600;letter-spacing:-0.03em">200,00 €</span>
+        <span style="font-size:12px;color:#A29BFF;margin-top:2px">soit 7 % de votre revenu de référence</span>
+      </div>
+      <div style="background:#1F2027;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+        <div style="padding:12px 14px;background:#1A1B20"><div style="font-size:12px;color:#8B8D98">Nom de l’enveloppe</div><div style="font-weight:500;margin-top:2px">Cadeaux &amp; sorties</div></div>
+        <div style="padding:12px 14px;background:#1A1B20;display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#8B8D98">Catégorie suivie</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ envCats }}" as="c" hint-placeholder-count="5">
+              <span style="height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px"><i class="icon-{{ c.icon }}"></i>{{ c.name }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:#1A1B20;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;color:#8B8D98">Reporter le reste</div><div style="font-weight:500;margin-top:2px">Sur le mois suivant</div></div><span style="width:40px;height:24px;border-radius:12px;background:#2A2B33;position:relative"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:9px;background:#F4F4F6"></span></span></div>
+      </div>
+      <button onClick="{{ close }}" style="height:52px;flex-shrink:0;border:0;border-radius:14px;background:#6C63FF;color:#F4F4F6;font-weight:600;font-size:15px;cursor:pointer">Créer l’enveloppe</button>
+    </sc-if>
+
+    <!-- CATEGORIE -->
+    <sc-if value="{{ isCat }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:60px;height:60px;border-radius:20px;background:rgba(244,114,182,0.16);color:#F472B6;display:flex;align-items:center;justify-content:center;font-size:28px"><i class="icon-ticket"></i></div>
+        <div style="flex:1;padding:10px 14px;border-radius:12px;background:#1A1B20;border:1px solid #23242B"><div style="font-size:12px;color:#8B8D98">Nom du groupe</div><div style="font-weight:600;color:#F472B6;margin-top:2px">Loisirs</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#8B8D98">Couleur</span>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <sc-for list="{{ swatches }}" as="c" hint-placeholder-count="8">
+            <span style="width:30px;height:30px;border-radius:15px;background:{{ c.color }};box-shadow:{{ c.ring }}"></span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#8B8D98">Icône</span>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+          <sc-for list="{{ iconGrid }}" as="c" hint-placeholder-count="12">
+            <span style="height:44px;border-radius:12px;background:{{ c.bg }};border:1px solid {{ c.border }};color:{{ c.color }};display:flex;align-items:center;justify-content:center;font-size:19px"><i class="icon-{{ c.icon }}"></i></span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#8B8D98">Sous-catégories</span>
+        <div style="background:#1F2027;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+          <sc-for list="{{ catSubs }}" as="s" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#1A1B20"><span style="flex:1;font-weight:500">{{ s }}</span><i class="icon-pencil" style="color:#8B8D98"></i><i class="icon-trash-2" style="color:#FF5A5F;margin-left:8px"></i></div>
+          </sc-for>
+          <div style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#1A1B20;color:#A29BFF;font-weight:500"><i class="icon-plus"></i>Ajouter une sous-catégorie</div>
+        </div>
+      </div>
+      <button onClick="{{ close }}" style="height:52px;flex-shrink:0;border:0;border-radius:14px;background:#6C63FF;color:#F4F4F6;font-weight:600;font-size:15px;cursor:pointer">Enregistrer</button>
+      <button style="height:40px;flex-shrink:0;border:0;border-radius:12px;background:transparent;color:#FF5A5F;font-weight:500;cursor:pointer;margin-top:-8px">Supprimer le groupe</button>
+    </sc-if>
+
+    <!-- COMPTE -->
+    <sc-if value="{{ isCompte }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#1F2027;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:1px">
+        <div style="padding:12px 14px;background:#1A1B20"><div style="font-size:12px;color:#8B8D98">Nom du compte</div><div style="font-weight:500;margin-top:2px">Banque</div></div>
+        <div style="padding:12px 14px;background:#1A1B20;display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#8B8D98">Type</span>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:#0C0D11">
+            <span style="height:34px;border-radius:9px;color:#8B8D98;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px"><i class="icon-wallet"></i>Espèces</span>
+            <span style="height:34px;border-radius:9px;color:#8B8D98;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px"><i class="icon-credit-card"></i>Carte</span>
+            <span style="height:34px;border-radius:9px;background:rgba(108,99,255,0.2);color:#C4BFFF;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px"><i class="icon-landmark"></i>Banque</span>
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:#1A1B20"><div style="font-size:12px;color:#8B8D98">Solde initial</div><div style="font-size:24px;font-weight:600;margin-top:4px">3 200,00 €</div></div>
+      </div>
+      <div style="display:flex;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(108,99,255,0.12);color:#C4BFFF;font-size:13px;line-height:1.45"><i class="icon-info" style="font-size:15px;margin-top:1px"></i><span>Modifier le solde initial recalcule le solde actuel : 4 862,75 € aujourd’hui.</span></div>
+      <button onClick="{{ close }}" style="height:52px;flex-shrink:0;border:0;border-radius:14px;background:#6C63FF;color:#F4F4F6;font-weight:600;font-size:15px;cursor:pointer">Enregistrer</button>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:393,&quot;height&quot;:852},&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mobile&quot;,&quot;desktop&quot;],&quot;default&quot;:&quot;mobile&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;accueil&quot;,&quot;transactions&quot;,&quot;budget&quot;,&quot;parametres&quot;,&quot;categories&quot;,&quot;comptes&quot;,&quot;recurrentes&quot;],&quot;default&quot;:&quot;accueil&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;vide&quot;,&quot;depassement&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;ajout&quot;,&quot;regle&quot;,&quot;enveloppe&quot;,&quot;categorie&quot;,&quot;compte&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;addType&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;depense&quot;,&quot;revenu&quot;,&quot;virement&quot;],&quot;default&quot;:&quot;depense&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;recur&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;freq&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;semaine&quot;,&quot;mois&quot;,&quot;annee&quot;],&quot;default&quot;:&quot;mois&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;end&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;jamais&quot;,&quot;date&quot;],&quot;default&quot;:&quot;jamais&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;soldeOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;upcomingOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;menuOpen&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;swipeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const C={primary:'#6C63FF',violet:'#A29BFF',mint:'#5EE6C0',orange:'#FF9F43',sky:'#4FC3F7',pink:'#F472B6',yellow:'#FACC15',green:'#34D07F',red:'#FF5A5F'};
+const REVENU=2800;
+const CATS=[
+ {id:'logement',name:'Logement',icon:'house',color:C.sky,subs:['Loyer','Assurance','Énergie']},
+ {id:'alim',name:'Alimentation',icon:'shopping-cart',color:C.mint,subs:['Courses','Restaurant','Boulangerie']},
+ {id:'transport',name:'Transport',icon:'bus',color:C.orange,subs:['Transports en commun','Carburant','Taxi']},
+ {id:'loisirs',name:'Loisirs',icon:'ticket',color:C.pink,subs:['Cinéma','Sorties','Sport']},
+ {id:'abos',name:'Abonnements',icon:'tv',color:C.yellow,subs:['Streaming','Téléphone','Musique']},
+ {id:'revenus',name:'Revenus',icon:'banknote',color:C.green,subs:['Salaire','Remboursement','Autres revenus']}];
+const VIR={id:'vir',name:'Virement',icon:'arrow-left-right',color:C.violet,subs:[]};
+const ACCOUNTS=[
+ {id:'cash',name:'Cash',type:'Espèces',icon:'wallet',init:200,bal:245.5},
+ {id:'carte',name:'Carte bancaire',type:'Carte de débit',icon:'credit-card',init:1500,bal:1180.2},
+ {id:'banque',name:'Banque',type:'Compte courant',icon:'landmark',init:3200,bal:4862.75}];
+const ENV=[{cat:'logement',alloc:870,spent:[850,850]},{cat:'alim',alloc:420,spent:[312.4,468.9]},{cat:'transport',alloc:160,spent:[118.6,118.6]},{cat:'loisirs',alloc:150,spent:[184.3,214.3]},{cat:'abos',alloc:60,spent:[42.97,42.97]}];
+const TX=[
+ ['t1','2026-08-28','18:42','Carrefour Market','alim','Courses','carte',-54.3,false],
+ ['t2','2026-08-28','08:15','Boulangerie Paul','alim','Boulangerie','cash',-6.8,false],
+ ['t3','2026-08-27','07:00','Navigo mensuel','transport','Transports en commun','banque',-86.4,true],
+ ['t4','2026-08-27','20:30','Cinéma UGC','loisirs','Cinéma','carte',-24,false],
+ ['t5','2026-08-26','12:10','Remboursement Léa','revenus','Remboursement','banque',35,false],
+ ['t6','2026-08-25','06:00','Netflix','abos','Streaming','carte',-13.49,true],
+ ['t7','2026-08-25','11:20','Retrait espèces','vir','Banque → Cash','banque',100,false],
+ ['t8','2026-08-25','21:05','Le Petit Bistrot','alim','Restaurant','carte',-38.5,false]];
+const RULES=[
+ ['r1','Salaire','revenus','banque',2800,'Chaque mois · le 1er','2026-09-01'],
+ ['r2','Loyer','logement','banque',-850,'Chaque mois · le 5','2026-09-05'],
+ ['r3','Retrait espèces','vir','Banque → Cash',100,'Chaque mois · le 10','2026-09-10'],
+ ['r4','Spotify','abos','carte',-10.99,'Chaque mois · le 12','2026-09-12'],
+ ['r5','Netflix','abos','carte',-13.49,'Chaque mois · le 25','2026-09-25'],
+ ['r6','Navigo mensuel','transport','banque',-86.4,'Chaque mois · le 27','2026-09-27'],
+ ['r7','Free Mobile','abos','banque',-15.99,'Chaque mois · le 29','2026-08-29'],
+ ['r8','Assurance habitation','logement','banque',-18.9,'Chaque mois · le 30','2026-08-30'],
+ ['r9','Amazon Prime','abos','carte',-69.9,'Chaque année · le 14 mars','2027-03-14'],
+ ['r10','Cours de yoga','loisirs','carte',-12,'Chaque semaine · le mardi','2026-09-01']];
+const NF=new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const eur=(n,signed)=>{n=Math.round(n*100)/100;return (n<0?'−':(signed&&n>0?'+':''))+NF.format(Math.abs(n))+'\u00a0€';};
+const pct=n=>n+'\u00a0%';
+const dt=x=>new Date(x+'T12:00:00');
+const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
+const er=(d,s)=>d.getDate()===1?s.replace(/^(\D*)1 /,'$11er '):s;
+const longDate=x=>{const d=dt(x);return cap(er(d,d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})));};
+const shortDate=x=>{const d=dt(x);return er(d,d.toLocaleDateString('fr-FR',d.getFullYear()===2026?{day:'numeric',month:'short'}:{day:'numeric',month:'short',year:'numeric'}));};
+const chip=(sel,color)=>({bg:sel?color+'26':'#23242B',color:sel?color:'#C9CAD1',border:sel?color+'66':'transparent'});
+
+class Component extends DCLogic {
+  state={screen:this.props.screen||'accueil',sheet:this.props.sheet||null,addType:this.props.addType||'depense',recur:this.props.recur??false,freq:this.props.freq||'mois',end:this.props.end||'jamais',soldeOpen:this.props.soldeOpen??false,upOpen:this.props.upcomingOpen??true,menu:this.props.menuOpen||null,swipe:this.props.swipeId||null,paused:{r10:true},sub:null,apply:'next'};
+  renderVals(){
+    const s=this.state,P=this.props;
+    const mob=(P.device||'mobile')!=='desktop';
+    const mode=P.state||'normal',empty=mode==='vide',over=mode==='depassement';
+    const set=o=>()=>this.setState(o);
+    const go=id=>()=>this.setState({screen:id,sheet:null,menu:null});
+    const cat=id=>id==='vir'?VIR:CATS.find(c=>c.id===id);
+    const acc=id=>ACCOUNTS.find(a=>a.id===id);
+    const amtColor=(v,vir)=>vir?'#C9CAD1':v<0?C.red:C.green;
+
+    const accounts=ACCOUNTS.map(a=>({...a,balLabel:eur(empty?0:a.bal),initLabel:eur(empty?0:a.init),onEdit:set({sheet:'compte'})}));
+    const totalBal=empty?0:ACCOUNTS.reduce((t,a)=>t+a.bal,0);
+
+    const envs=empty?[]:ENV.map(e=>{const c=cat(e.cat),sp=e.spent[over?1:0],p=Math.round(sp/e.alloc*100),ov=sp>e.alloc,col=ov?C.red:c.color;
+      return {id:e.cat,name:c.name,icon:c.icon,color:c.color,tint:c.color+'24',alloc:eur(e.alloc),spent:eur(sp),sp,allocN:e.alloc,p,pctLabel:pct(p),revPct:pct(Math.round(e.alloc/REVENU*100))+' du revenu',barW:Math.min(p,100)+'%',barColor:col,over:ov,notOver:!ov,restLabel:eur(e.alloc-sp),overLabel:'Dépassement de '+eur(sp-e.alloc),border:ov?'rgba(255,90,95,0.4)':'#1F2027',menuOpen:s.menu===e.cat,toggleMenu:()=>this.setState({menu:s.menu===e.cat?null:e.cat}),chipColor:col,chipBg:col+'1F'};});
+    const alloc=envs.reduce((t,e)=>t+e.allocN,0),spent=envs.reduce((t,e)=>t+e.sp,0);
+    const bOver=spent>alloc,bPct=alloc?Math.round(spent/alloc*100):0;
+    const SPANS=[[2,2],[2,1]];
+    const mosaic=[...envs].sort((a,b)=>b.allocN-a.allocN).map((e,i)=>{const [cs,rs]=SPANS[i]||[1,1];const big=i===0;
+      return {...e,cs,rs,big,pctSize:big?'64px':i===1?'42px':'32px',trackBg:e.color+'26',tileBg:(e.over?C.red:e.color)+'0F',tileBorder:(e.over?C.red:e.color)+(e.over?'66':'2E'),fillH:Math.min(e.p,100)+'%',fillBg:(e.over?C.red:e.color)+'2B',overShort:'+'+eur(e.sp-e.allocN),restShort:e.over?'':'reste '+eur(e.allocN-e.sp)};});
+    envs.forEach(e=>{e.mBar=e.over?C.red:C.primary;e.mPctColor=e.over?C.red:'#8B8D98';});
+    const unalloc=Math.max(REVENU-alloc,0);
+
+    const R=56,CI=2*Math.PI*R;let off=0;
+    const SW=14,GAP=7;const circles=spent?envs.map(e=>{const f=e.sp/spent,len=Math.max(f*CI-GAP-SW,0.01);const el=React.createElement('circle',{key:e.id,cx:68,cy:68,r:R,fill:'none',stroke:e.color,strokeWidth:SW,strokeLinecap:'round',strokeDasharray:len+' '+(CI-len),strokeDashoffset:-(off+SW/2+GAP/2)});off+=f*CI;return el;}):[];
+    const donut=React.createElement('svg',{width:136,height:136,viewBox:'0 0 136 136',style:{transform:'rotate(-90deg)',display:'block'}},[...circles]);
+    const legend=[...envs].sort((a,b)=>b.sp-a.sp).map(e=>({...e,share:pct(Math.round(e.sp/spent*100))}));
+
+    const txs=empty?[]:TX.map(([id,date,time,name,cid,sub,aid,amt,rec])=>{const c=cat(cid),vir=cid==='vir';
+      return {id,date,time,name,rec,amt,vir,icon:c.icon,color:c.color,tint:c.color+'24',catName:c.name,subName:sub,account:vir?sub:acc(aid).name,amount:vir?eur(amt):eur(amt,true),amtColor:amtColor(amt,vir),dateShort:shortDate(date),shift:s.swipe===id?'translateX(-76px)':'none',onSwipe:()=>this.setState({swipe:s.swipe===id?null:id})};});
+    const groups=[];txs.forEach(t=>{let g=groups.find(x=>x.date===t.date);if(!g){g={date:t.date,label:longDate(t.date),items:[],tot:0};groups.push(g);}g.items.push(t);if(!t.vir)g.tot+=t.amt;});
+    groups.forEach(g=>g.total=eur(g.tot,true));
+
+    const rules=empty?[]:RULES.map(([id,name,cid,aid,amt,freq,next])=>{const c=cat(cid),vir=cid==='vir',paused=!!s.paused[id],meta=vir?aid:acc(aid).name;
+      return {id,name,next,paused,vir,amt,icon:c.icon,color:c.color,tint:c.color+'24',catName:c.name,meta:vir?'Virement · '+aid:c.name+' · '+meta,freq:freq+' · '+meta,nextLabel:paused?'En pause':'Prochaine : '+shortDate(next),nextColor:paused?'#FF9F43':'#A29BFF',amount:vir?eur(amt):eur(amt,true),amtColor:amtColor(amt,vir),opacity:paused?0.45:1,tBg:paused?'#2A2B33':C.primary,tLeft:paused?'3px':'19px',toggle:()=>this.setState(st=>({paused:{...st.paused,[id]:!st.paused[id]},menu:null})),menuOpen:s.menu===id,toggleMenu:()=>this.setState({menu:s.menu===id?null:id}),pauseLabel:paused?'Réactiver':'Mettre en pause',pauseIcon:paused?'play':'pause',edit:set({sheet:'regle',menu:null})};})
+      .sort((a,b)=>(a.paused-b.paused)||a.next.localeCompare(b.next));
+    const actives=rules.filter(r=>!r.paused);
+    const upcoming=actives.filter(r=>r.next>='2026-08-28'&&r.next<='2026-09-27').map(r=>{const d=dt(r.next);return {...r,dayNum:d.getDate(),mon:d.toLocaleDateString('fr-FR',{month:'short'})};});
+    const upSum=upcoming.filter(u=>!u.vir).reduce((t,u)=>t+u.amt,0);
+    const augSum=upcoming.filter(u=>!u.vir&&u.next<'2026-09-01').reduce((t,u)=>t+u.amt,0);
+
+    const NAV=[['accueil','Accueil','layout-grid'],['transactions','Transactions','arrow-left-right'],['budget','Budget','piggy-bank'],['parametres','Réglages','settings']];
+    const cur=['categories','comptes','recurrentes'].includes(s.screen)?'parametres':s.screen;
+    const nav=NAV.map(([id,label,icon])=>({label:id==='parametres'?'Paramètres':label,icon,go:go(id),bg:cur===id?'rgba(108,99,255,0.16)':'transparent',color:cur===id?'#C4BFFF':'#8B8D98',tab:cur===id?'#8F88FF':'#6B6D78'}));
+
+    const row=(o)=>({go:()=>{},trail:'chevron-right',labelColor:o.danger?C.red:'#F4F4F6',iconColor:o.danger?C.red:'#C9CAD1',iconBg:o.danger?'rgba(255,90,95,0.12)':'#1C1D23',value:null,tag:null,...o});
+    const settings=[
+      {title:'Organisation',rows:[row({icon:'tags',label:'Catégories',sub:'6 groupes · 18 sous-catégories',go:go('categories')}),row({icon:'wallet',label:'Comptes',sub:'Cash, Carte bancaire, Banque',go:go('comptes')}),row({icon:'refresh-cw',label:'Transactions récurrentes',sub:rules.length?`${rules.length} règles · ${actives.length} actives`:'Aucune règle',go:go('recurrentes')})]},
+      {title:'Budget',rows:[row({icon:'banknote',label:'Revenu mensuel de référence',sub:'Base du calcul des % par enveloppe',value:eur(REVENU),trail:'pencil'}),row({icon:'euro',label:'Devise',sub:'Modifiable dans une prochaine version',value:'Euro (€)',tag:'Figée',trail:'none'})]},
+      {title:'Données',rows:[row({icon:'download',label:'Exporter les données',sub:'Fichier CSV ou JSON'}),row({icon:'upload',label:'Importer des données',sub:'Depuis une sauvegarde JSON'}),row({icon:'rotate-ccw',label:'Réinitialiser les données',sub:'Efface transactions, budgets et réglages',danger:true,trail:'none'})]}];
+
+    const isRegle=s.sheet==='regle',type=isRegle?'depense':s.addType,isVir=type==='virement';
+    const F=isRegle?{amt:-850,date:'2026-09-05',time:'08:00',acc:'banque',cat:'logement',sub:'Loyer',note:'Loyer appartement'}
+      :type==='revenu'?{amt:2800,date:'2026-09-01',time:'09:00',acc:'banque',cat:'revenus',sub:'Salaire',note:'Salaire de septembre'}
+      :isVir?{amt:100,date:'2026-09-10',time:'10:00',note:'Retrait espèces mensuel'}
+      :{amt:-54.3,date:'2026-08-28',time:'18:42',acc:'carte',cat:'alim',sub:'Courses',note:'Courses de la semaine'};
+    const recur=isRegle||s.recur,d=dt(F.date),dn=d.getDate()===1?'1er':String(d.getDate()),wd=d.toLocaleDateString('fr-FR',{weekday:'long'}),mon=d.toLocaleDateString('fr-FR',{month:'long'});
+    const base=s.freq==='semaine'?`Se répète chaque ${wd}`:s.freq==='annee'?`Se répète chaque année le ${dn} ${mon}`:`Se répète le ${dn} de chaque mois`;
+    const fc=F.cat?cat(F.cat):null,fa=F.acc?acc(F.acc):null,selSub=s.sub||F.sub;
+    const f={isRegle,isVir,notVir:!isVir,recur,amount:isVir?eur(F.amt):eur(F.amt,true),amtColor:isVir?'#F4F4F6':F.amt<0?C.red:C.green,
+      accIcon:fa?fa.icon:'',accName:fa?fa.name:'',catIcon:fc?fc.icon:'',catName:fc?fc.name:'',catColor:fc?fc.color:'',catTint:fc?fc.color+'24':'',
+      fromBal:'Solde '+eur(4862.75),toBal:'Solde '+eur(245.5),dateLabel:longDate(F.date)+' · '+F.time,note:F.note,
+      tBg:recur?C.primary:'#2A2B33',tLeft:recur?'19px':'3px',toggleRecur:isRegle?()=>{}:set({recur:!s.recur}),
+      dayRec:s.freq==='semaine'?cap(wd):s.freq==='annee'?`Le ${dn} ${mon}`:`Le ${dn} du mois`,
+      summary:base+(s.end==='jamais'?', sans fin.':', jusqu’au 31 décembre 2026.'),
+      cta:isRegle?'Enregistrer la règle':'Ajouter la transaction'};
+    const types=[['depense','Dépense',C.red],['revenu','Revenu',C.green],['virement','Virement',C.violet]].map(([id,label,col])=>({label,pick:isRegle?()=>{}:set({addType:id,sub:null}),bg:type===id?col+'26':'transparent',color:type===id?col:'#8B8D98'}));
+    const subChips=fc?fc.subs.map(n=>({name:n,pick:set({sub:n}),...chip(n===selSub,fc.color)})):[];
+    const freqs=[['semaine','Chaque semaine'],['mois','Chaque mois'],['annee','Chaque année']].map(([id,label])=>({label,pick:set({freq:id}),...chip(s.freq===id,C.violet)}));
+    const ends=[['jamais','Jamais'],['date','Jusqu’au 31 déc. 2026']].map(([id,label])=>({label,pick:set({end:id}),...chip(s.end===id,C.violet)}));
+    const applyOpts=[['next','Aux prochaines occurrences seulement','Les transactions déjà enregistrées restent inchangées'],['all','À toutes les occurrences','Modifie aussi l’historique de cette règle']].map(([id,label,sub])=>{const on=s.apply===id;return {label,sub,pick:set({apply:id}),border:on?'rgba(108,99,255,0.6)':'#23242B',bg:on?'rgba(108,99,255,0.1)':'#1A1B20',ring:on?C.primary:'#3A3B44',dot:on?C.primary:'transparent'};});
+
+    const titles={ajout:'Nouvelle transaction',regle:'Modifier la récurrence',enveloppe:'Nouvelle enveloppe',categorie:'Modifier le groupe',compte:'Modifier le compte'};
+    const envCats=CATS.filter(c=>c.id!=='revenus').map(c=>({name:c.name,icon:c.icon,...chip(c.id==='loisirs',c.color)}));
+    const swatches=[C.mint,C.orange,C.sky,C.pink,C.yellow,C.green,C.red,C.violet].map(c=>({color:c,ring:c===C.pink?'0 0 0 3px #141519, 0 0 0 5px '+c:'none'}));
+    const iconGrid=['ticket','film','music','gamepad-2','dumbbell','plane','gift','coffee','book-open','camera','palette','party-popper'].map(i=>({icon:i,bg:i==='ticket'?'rgba(244,114,182,0.16)':'#1A1B20',border:i==='ticket'?'rgba(244,114,182,0.5)':'#23242B',color:i==='ticket'?C.pink:'#8B8D98'}));
+
+    const net=empty?0:2835-spent;
+    return {
+      isMobile:mob,isDesktop:!mob,isEmpty:empty,hasData:!empty,
+      pad:mob?'4px 16px 24px':'32px 40px 48px',wide:mob?'auto':'span 2',chipWrap:mob?'nowrap':'wrap',
+      sAccueil:s.screen==='accueil',sTx:s.screen==='transactions',sBudget:s.screen==='budget',sParams:s.screen==='parametres',sCats:s.screen==='categories',sComptes:s.screen==='comptes',sRec:s.screen==='recurrentes',
+      nav,tabsL:nav.slice(0,2),tabsR:nav.slice(2),
+      openAdd:set({sheet:'ajout',addType:'depense',sub:null}),openEnv:set({sheet:'enveloppe',menu:null}),openCat:set({sheet:'categorie'}),openRule:set({sheet:'ajout',recur:true}),close:set({sheet:null}),
+      goTx:go('transactions'),goBudget:go('budget'),goParams:go('parametres'),
+      accounts,totalBal:eur(totalBal),soldeOpen:s.soldeOpen,soldeIcon:s.soldeOpen?'chevron-up':'chevron-down',toggleSolde:set({soldeOpen:!s.soldeOpen}),
+      netLabel:empty?'Aucun mouvement ce mois-ci':eur(net,true)+' ce mois-ci',netColor:empty?'#8B8D98':net>=0?C.green:C.red,
+      budgetPct:pct(bPct),budgetPctLong:pct(bPct)+' consommé',budgetW:Math.min(bPct,100)+'%',budgetColor:bOver?C.red:C.primary,budgetTagBg:bOver?'rgba(255,90,95,0.14)':'rgba(108,99,255,0.16)',budgetBorder:bOver?'rgba(255,90,95,0.4)':'#1F2027',
+      budgetOver:bOver,budgetOverLabel:'Dépassement de '+eur(spent-alloc)+' sur le budget total',
+      resteLabel:eur(alloc-spent),resteColor:bOver?C.red:'#F4F4F6',resteTitle:bOver?'Dépassement':'Restant',resteAbs:eur(Math.abs(alloc-spent)),
+      allocLabel:eur(alloc),allocSub:alloc?`${pct(Math.round(alloc/REVENU*100))} de votre revenu de référence (${eur(REVENU)}) · ${envs.length} enveloppes`:'Aucune enveloppe pour le moment',
+      spentLabel:eur(spent),topEnvs:[...envs].sort((a,b)=>b.p-a.p).slice(0,3),donut,legend,
+      upcomingTop:upcoming.slice(0,5),augExpected:eur(augSum,true),
+      filters:[['calendar','Août 2026',true],['wallet','Tous les comptes'],['tags','Toutes les catégories'],['arrow-up-down','Tous les types']].map(([icon,label,on])=>({icon,label,bg:on?'rgba(108,99,255,0.16)':'#141519',color:on?'#C4BFFF':'#C9CAD1',border:on?'rgba(108,99,255,0.4)':'#23242B'})),
+      hasUpcoming:upcoming.length>0,upOpen:s.upOpen,upIcon:s.upOpen?'chevron-up':'chevron-down',toggleUp:set({upOpen:!s.upOpen}),upcoming,upCount:upcoming.length+' échéances',upTotal:eur(upSum,true),upTotalColor:upSum>=0?C.green:C.red,
+      txMobile:mob&&!empty,txDesktop:!mob&&!empty,groups,txs,recentTx:txs.slice(0,5),
+      envs,mosaic,unallocN:unalloc,unallocLabel:eur(unalloc),unallocSub:pct(Math.round(unalloc/REVENU*100))+' du revenu de référence, à répartir ou à épargner',mosaicCols:mob?'repeat(2,minmax(0,1fr))':'repeat(4,minmax(0,1fr))',mosaicRow:mob?'156px':'172px',settings,cats:CATS.map(c=>({...c,tint:c.color+'24',count:c.subs.length+' sous-catégories'})),
+      rules,hasRules:rules.length>0,rulesEmpty:rules.length===0,rulesSummary:`${rules.length} règles · ${actives.length} actives · prochaine échéance le ${actives.length?shortDate([...actives].sort((a,b)=>a.next.localeCompare(b.next))[0].next):'—'}`,
+      sheetOpen:!!s.sheet,sheetTitle:titles[s.sheet]||'',isForm:s.sheet==='ajout'||isRegle,isEnv:s.sheet==='enveloppe',isCat:s.sheet==='categorie',isCompte:s.sheet==='compte',
+      ovJustify:mob?'flex-end':'center',sheetW:mob?'100%':'540px',sheetH:mob?'93%':'90%',sheetR:mob?'24px 24px 0 0':'20px',sheetPad:mob?'14px 16px 28px':'24px',
+      f,types,subChips,freqs,ends,applyOpts,envCats,swatches,iconGrid,catSubs:['Cinéma','Sorties','Sport']
+    };
+  }
+}
+</script>
+</body>
+</html>

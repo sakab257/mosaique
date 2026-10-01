@@ -1,0 +1,364 @@
+<app-sheet [title]="title">
+  <form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <app-segmented formControlName="type" [options]="typeOptions" label="Type de transaction" />
+
+    <!-- Montant -->
+    <div class="flex flex-col items-center gap-1 pt-2 pb-1">
+      <label for="tx-amount" class="text-xs text-muted">Montant</label>
+      <div
+        class="flex max-w-full items-baseline justify-center gap-1 font-semibold text-amount"
+        [class]="hasAmount() ? amountClass() : 'text-faint'"
+      >
+        @if (sign()) {
+          <span aria-hidden="true">{{ sign() }}</span>
+        }
+        <!-- Le texte miroir invisible donne au champ la largeur exacte de sa valeur. -->
+        <span class="inline-grid min-w-0">
+          <span class="invisible col-start-1 row-start-1 whitespace-pre" aria-hidden="true">{{
+            state().amount || '0,00'
+          }}</span>
+          <input
+            id="tx-amount"
+            size="1"
+            formControlName="amount"
+            inputmode="decimal"
+            autocomplete="off"
+            enterkeyhint="done"
+            placeholder="0,00"
+            cdkFocusInitial
+            class="col-start-1 row-start-1 w-full min-w-0 border-b-2 border-transparent bg-transparent text-center outline-none placeholder:text-faint focus:border-primary"
+            [attr.aria-invalid]="errors().amount ? true : null"
+            [attr.aria-describedby]="errors().amount ? 'tx-amount-error' : null"
+            (blur)="formatAmount()"
+          />
+        </span>
+        <span aria-hidden="true">€</span>
+      </div>
+      @if (errors().amount; as message) {
+        <p id="tx-amount-error" class="text-caption text-expense" role="alert">{{ message }}</p>
+      }
+    </div>
+
+    <!-- Champs -->
+    <div class="flex flex-col gap-px overflow-hidden rounded-field bg-line">
+      @if (type() !== 'transfer') {
+        <app-picker
+          label="Compte"
+          icon="account_balance_wallet"
+          formControlName="accountId"
+          placeholder="Choisir un compte"
+          [options]="accountOptions()"
+          [invalid]="!!errors().account"
+          [describedBy]="errors().account ? 'tx-account-error' : undefined"
+        />
+        <div class="flex flex-col bg-surface-2">
+          <app-picker
+            label="Catégorie"
+            icon="sell"
+            formControlName="groupId"
+            placeholder="Choisir une catégorie"
+            colorValue
+            [options]="groupOptions()"
+            [invalid]="!!errors().group"
+            [describedBy]="errors().group ? 'tx-group-error' : undefined"
+          />
+          @if (subcategories().length) {
+            <div
+              class="flex flex-wrap gap-1.5 px-3.5 pb-3"
+              role="group"
+              aria-label="Sous-catégorie"
+            >
+              @for (sub of subcategories(); track sub.id) {
+                <button
+                  type="button"
+                  appChip
+                  [selected]="form.controls.subcategoryId.value === sub.id"
+                  [color]="selectedGroup()?.color ?? '#A29BFF'"
+                  (click)="toggleSubcategory(sub.id)"
+                >
+                  {{ sub.name }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <div
+          class="grid grid-cols-[minmax(0,1fr)_32px_minmax(0,1fr)] items-center gap-2 bg-surface-2 p-3"
+        >
+          <app-picker
+            variant="card"
+            label="Depuis"
+            formControlName="accountId"
+            placeholder="Choisir"
+            [options]="accountOptions()"
+          />
+          <span
+            class="flex size-8 items-center justify-center rounded-full bg-primary/18 text-primary-soft"
+            aria-hidden="true"
+          >
+            <app-icon name="arrow_forward" [size]="18" />
+          </span>
+          <app-picker
+            variant="card"
+            label="Vers"
+            formControlName="toAccountId"
+            placeholder="Choisir"
+            [options]="accountOptions()"
+            [invalid]="!!errors().toAccount"
+            [describedBy]="errors().toAccount ? 'tx-to-error' : undefined"
+          />
+        </div>
+      }
+
+      <div class="flex items-center gap-3 bg-surface-2 px-3.5 py-3">
+        <span
+          class="flex size-8 shrink-0 items-center justify-center rounded-item bg-surface-4 text-ink-3"
+          aria-hidden="true"
+        >
+          <app-icon name="calendar_today" [size]="16" />
+        </span>
+        <div class="min-w-0 flex-1">
+          <span id="tx-datetime-label" class="block text-xs text-muted">{{ dateLabel() }}</span>
+          <div class="flex flex-wrap items-center gap-x-3">
+            <input
+              type="date"
+              formControlName="date"
+              aria-label="Date"
+              class="min-w-0 bg-transparent font-medium scheme-dark outline-none focus-visible:underline"
+              [attr.aria-invalid]="errors().date ? true : null"
+            />
+            <input
+              type="time"
+              formControlName="time"
+              aria-label="Heure"
+              class="bg-transparent font-medium scheme-dark outline-none focus-visible:underline"
+              [attr.aria-invalid]="errors().time ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+
+      <label class="flex items-center gap-3 bg-surface-2 px-3.5 py-3">
+        <span
+          class="flex size-8 shrink-0 items-center justify-center rounded-item bg-surface-4 text-ink-3"
+          aria-hidden="true"
+        >
+          <app-icon name="edit_note" [size]="18" />
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-xs text-muted">Note</span>
+          <input
+            formControlName="note"
+            maxlength="120"
+            autocomplete="off"
+            enterkeyhint="done"
+            placeholder="Ex. : Carrefour Market"
+            class="block w-full bg-transparent font-medium outline-none placeholder:font-normal placeholder:text-faint"
+          />
+        </span>
+      </label>
+
+      @if (canRepeat) {
+        <div class="flex flex-col gap-3.5 bg-surface-2 px-3.5 py-3">
+          <div class="flex items-center gap-3">
+            <span
+              class="flex size-8 shrink-0 items-center justify-center rounded-item bg-primary/16 text-primary-soft"
+              aria-hidden="true"
+            >
+              <app-icon name="autorenew" [size]="17" />
+            </span>
+            <span id="tx-recur-label" class="flex-1 font-medium">
+              {{ recurrenceLocked ? 'Récurrence' : 'Répéter cette transaction' }}
+            </span>
+            @if (!recurrenceLocked) {
+              <app-toggle formControlName="recur" labelledBy="tx-recur-label" />
+            }
+          </div>
+
+          @if (recur()) {
+            <div class="flex flex-col gap-3.5 border-t border-line-strong pt-3">
+              <div class="flex flex-col gap-2">
+                <span id="tx-frequency-label" class="text-xs text-muted">Fréquence</span>
+                <div
+                  class="flex flex-wrap gap-1.5"
+                  role="group"
+                  aria-labelledby="tx-frequency-label"
+                >
+                  @for (option of frequencies; track option.value) {
+                    <button
+                      type="button"
+                      appChip
+                      [selected]="state().frequency === option.value"
+                      (click)="setFrequency(option.value)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <label for="tx-recur-day" class="block text-xs text-muted"
+                    >Jour de la récurrence</label
+                  >
+                  <span class="mt-px block text-2xs text-faint"
+                    >Proposé d’après la date choisie</span
+                  >
+                </div>
+                @if (state().frequency === 'yearly') {
+                  <span
+                    id="tx-recur-day"
+                    class="flex h-8 items-center rounded-item bg-surface-4 px-3 text-caption font-medium"
+                  >
+                    {{ yearlyDayLabel() }}
+                  </span>
+                } @else {
+                  <span class="relative">
+                    <select
+                      #daySelect
+                      id="tx-recur-day"
+                      class="h-8 cursor-pointer appearance-none rounded-item bg-surface-4 pr-8 pl-3 text-caption font-medium outline-none focus-visible:outline-2 focus-visible:outline-primary"
+                      [value]="recurrenceDay()"
+                      (change)="onRecurrenceDayChange(daySelect.value)"
+                    >
+                      @for (
+                        option of state().frequency === 'weekly' ? weekdayOptions : monthDayOptions;
+                        track option.value
+                      ) {
+                        <option
+                          [value]="option.value"
+                          [selected]="option.value === recurrenceDay()"
+                        >
+                          {{ option.label }}
+                        </option>
+                      }
+                    </select>
+                    <app-icon
+                      name="expand_more"
+                      [size]="16"
+                      class="pointer-events-none absolute top-2 right-2 text-muted"
+                    />
+                  </span>
+                }
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <span id="tx-end-label" class="text-xs text-muted">Fin</span>
+                <div
+                  class="flex flex-wrap items-center gap-1.5"
+                  role="group"
+                  aria-labelledby="tx-end-label"
+                >
+                  <button
+                    type="button"
+                    appChip
+                    [selected]="state().endMode === 'never'"
+                    (click)="setEndMode('never')"
+                  >
+                    Jamais
+                  </button>
+                  <button
+                    type="button"
+                    appChip
+                    [selected]="state().endMode === 'date'"
+                    (click)="setEndMode('date')"
+                  >
+                    Jusqu’au…
+                  </button>
+                  @if (state().endMode === 'date') {
+                    <input
+                      type="date"
+                      formControlName="endDate"
+                      aria-label="Date de fin"
+                      class="h-8 rounded-item bg-surface-4 px-3 text-caption font-medium scheme-dark outline-none focus-visible:outline-2 focus-visible:outline-primary"
+                      [attr.aria-invalid]="errors().endDate ? true : null"
+                    />
+                  }
+                </div>
+              </div>
+
+              @if (summary(); as text) {
+                <p
+                  class="flex items-start gap-2.5 rounded-item bg-primary/12 px-3 py-2.5 text-caption leading-snug text-primary-ink"
+                  aria-live="polite"
+                >
+                  <app-icon name="info" [size]="16" class="mt-px" />
+                  {{ text }}
+                </p>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    @let e = errors();
+    @if (hasFieldErrors()) {
+      <ul class="flex flex-col gap-1 text-caption text-expense" role="alert">
+        @if (e.account) {
+          <li id="tx-account-error">{{ e.account }}</li>
+        }
+        @if (e.group) {
+          <li id="tx-group-error">{{ e.group }}</li>
+        }
+        @if (e.toAccount) {
+          <li id="tx-to-error">{{ e.toAccount }}</li>
+        }
+        @if (e.date) {
+          <li>{{ e.date }}</li>
+        }
+        @if (e.time) {
+          <li>{{ e.time }}</li>
+        }
+        @if (e.note) {
+          <li>{{ e.note }}</li>
+        }
+        @if (e.endDate) {
+          <li>{{ e.endDate }}</li>
+        }
+      </ul>
+    }
+
+    @if (editing?.recurringRuleId) {
+      <div
+        class="flex items-start gap-2.5 rounded-item bg-primary/12 px-3 py-2.5 text-caption leading-snug text-primary-ink"
+      >
+        <app-icon name="info" [size]="16" class="mt-px" />
+        <div class="flex-1">
+          <p>
+            Générée par une transaction récurrente : vos modifications ne s’appliquent qu’à cette
+            échéance, pas à la règle.
+          </p>
+          @if (sourceRule) {
+            <button
+              type="button"
+              appButton="link"
+              class="mt-1 underline-offset-2 hover:underline"
+              (click)="editSourceRule()"
+            >
+              Modifier la récurrence
+            </button>
+          }
+        </div>
+      </div>
+    }
+    @if (mode === 'edit-rule') {
+      <p
+        class="flex items-start gap-2.5 rounded-item bg-surface-2 px-3 py-2.5 text-caption leading-snug text-ink-3"
+      >
+        <app-icon name="info" [size]="16" class="mt-px text-muted" />
+        Les modifications s’appliquent aux prochaines échéances. Les transactions déjà enregistrées
+        restent inchangées.
+      </p>
+    }
+
+    <button type="submit" appButton size="lg" block>{{ cta() }}</button>
+    @if (editing || editingRule) {
+      <button type="button" appButton="danger-ghost" block class="-mt-2" (click)="delete()">
+        {{ editingRule ? 'Supprimer la récurrence' : 'Supprimer la transaction' }}
+      </button>
+    }
+  </form>
+</app-sheet>
