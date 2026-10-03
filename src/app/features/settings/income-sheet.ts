@@ -18,7 +18,7 @@ import {
   imports: [ReactiveFormsModule, Sheet, Button, Icon],
   template: `
     <app-sheet title="Revenu mensuel de référence">
-      <form class="flex flex-col gap-4" (ngSubmit)="save()" novalidate>
+      <form class="flex flex-col gap-4" (submit)="save($event)" novalidate>
         <label class="flex flex-col items-center gap-1 py-2">
           <span class="text-xs text-muted">Montant net par mois</span>
           <span class="flex items-baseline gap-1 text-amount font-semibold">
@@ -71,7 +71,9 @@ export class IncomeSheet {
   );
   protected readonly error = signal<string | null>(null);
 
-  protected save(): void {
+  /** Enregistre ; bloque l'envoi natif du formulaire (qui rechargerait la page). */
+  protected save(event: SubmitEvent): void {
+    event.preventDefault();
     const key = Object.keys(this.amount.errors ?? {})[0];
     if (key) {
       this.error.set(AMOUNT_MESSAGES[key]);

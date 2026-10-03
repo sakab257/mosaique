@@ -1,17 +1,22 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { createDefaultData } from '../data/defaults';
 import { AppData } from '../models';
 import { StorageService } from '../storage/storage.service';
 
 /**
- * Source de vérité unique : un signal contenant tout l'`AppData`, persisté à chaque
- * changement. Les stores de domaine (comptes, transactions…) exposent des sélecteurs
- * `computed` et des mutations immuables construites sur `update`.
+ * Source de vérité unique : un signal contenant tout l'`AppData`. Les stores de domaine
+ * (comptes, transactions…) exposent des sélecteurs `computed` et des mutations immuables
+ * construites sur `update`.
+ *
+ * Chaque mutation est écrite **immédiatement et de façon synchrone** dans le stockage :
+ * l'action est sauvegardée avant même le rafraîchissement de l'écran, ce qui la protège
+ * d'une fermeture brutale de l'app (balayage sur iPhone, onglet fermé…).
  */
 @Injectable({ providedIn: 'root' })
 export class AppStore {
   private readonly storage = inject(StorageService);
-  private readonly state = signal<AppData>(this.storage.load() ?? createDefaultData());
+  private readonly loaded = this.storage.load();
+  private readonly state = signal<AppData>(this.loaded ?? createDefaultData());
 
   readonly data = this.state.asReadonly();
   readonly accounts = computed(() => this.state().accounts);
@@ -26,21 +31,28 @@ export class AppStore {
   readonly storageError = this.storage.lastError.asReadonly();
 
   constructor() {
-    effect(() => this.storage.save(this.state()));
+    // Première ouverture (ou document illisible, sauvegardé à part) : état initial persisté.
+    if (!this.loaded) this.storage.save(this.state());
   }
 
   /** Applique une transformation immuable de l'état. */
   update(recipe: (data: AppData) => AppData): void {
-    this.state.update(recipe);
+    this.commit(recipe(this.state()));
   }
 
   /** Remplace tout l'état (import, données d'exemple). */
   replace(data: AppData): void {
-    this.state.set(data);
+    this.commit(data);
   }
 
   /** Revient à une installation neuve. */
   reset(): void {
-    this.state.set(createDefaultData());
+    this.commit(createDefaultData());
+  }
+
+  private commit(next: AppData): void {
+    if (next === this.state()) return;
+    this.state.set(next);
+    this.storage.save(next);
   }
 }

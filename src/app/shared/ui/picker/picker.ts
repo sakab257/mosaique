@@ -77,13 +77,17 @@ let nextId = 0;
       [attr.aria-invalid]="invalid() || null"
       [attr.aria-describedby]="describedBy() || null"
       [disabled]="isDisabled()"
-      [value]="value() ?? ''"
       (change)="onSelect($event)"
       (blur)="onTouched()"
     >
-      @if (!value()) {
-        <option value="" disabled>{{ placeholder() }}</option>
-      }
+      <!--
+        Option d'attente toujours présente et explicitement sélectionnée tant qu'aucune
+        valeur n'est choisie : sinon le navigateur sélectionne en silence la première option
+        réelle, et la choisir ensuite ne déclenche aucun événement « change ».
+        La sélection passe uniquement par [selected] sur chaque option (un [value] sur le
+        <select> serait appliqué avant la création des options, donc sans effet).
+      -->
+      <option value="" disabled [selected]="!hasSelection()">{{ placeholder() }}</option>
       @for (opt of options(); track opt.value) {
         <option [value]="opt.value" [selected]="opt.value === value()">
           {{ opt.label }}{{ opt.hint ? ' · ' + opt.hint : '' }}
@@ -119,6 +123,8 @@ export class Picker implements ControlValueAccessor {
   protected readonly selected = computed(() =>
     this.options().find((o) => o.value === this.value()),
   );
+  /** Une option proposée correspond à la valeur (sinon l'option d'attente est sélectionnée). */
+  protected readonly hasSelection = computed(() => this.selected() !== undefined);
 
   protected readonly hostClasses = computed(() =>
     this.variant() === 'row'

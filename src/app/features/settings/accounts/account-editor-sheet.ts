@@ -27,7 +27,7 @@ const TYPE_OPTIONS: readonly SegmentOption<AccountType>[] = [
   imports: [Sheet, Segmented, Icon, Button],
   template: `
     <app-sheet [title]="editing ? 'Modifier le compte' : 'Nouveau compte'">
-      <form class="flex flex-col gap-4" (ngSubmit)="save()" novalidate>
+      <form class="flex flex-col gap-4" (submit)="save($event)" novalidate>
         <div class="flex flex-col gap-px overflow-hidden rounded-field bg-line">
           <label class="block bg-surface-2 px-3.5 py-3">
             <span class="block text-xs text-muted">Nom du compte</span>
@@ -138,7 +138,9 @@ export class AccountEditorSheet {
     return formatMoney(this.accounts.balanceOf(this.editing.id) + delta);
   });
 
-  protected save(): void {
+  /** Enregistre ; bloque l'envoi natif du formulaire (qui rechargerait la page). */
+  protected save(event: SubmitEvent): void {
+    event.preventDefault();
     this.submitted.set(true);
     const initial = this.parsedInitial();
     if (!this.name().trim() || initial === null) return;

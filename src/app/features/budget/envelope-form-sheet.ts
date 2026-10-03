@@ -84,7 +84,7 @@ function formatPercentInput(value: number): string {
               </div>
             } @else {
               <p class="text-caption text-muted">
-                Toutes les catégories de dépenses ont déjà une enveloppe.
+                Toutes les catégories de sorties d’argent ont déjà une enveloppe.
               </p>
             }
           </div>

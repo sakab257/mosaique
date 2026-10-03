@@ -38,7 +38,7 @@ import { GroupEditorData, GroupEditorSheet } from './group-editor-sheet';
                   {{ row.group.name }}
                 </h2>
                 <p class="text-xs text-muted">
-                  {{ row.count }}{{ row.group.kind === 'income' ? ' · revenus' : '' }}
+                  {{ row.count }}{{ row.group.kind === 'income' ? ' · entrées d’argent' : '' }}
                 </p>
               </div>
               <button

@@ -20,8 +20,8 @@ import { AccountEditorData, AccountEditorSheet } from './account-editor-sheet';
       </button>
     </app-page-header>
     <p class="text-caption text-pretty text-muted">
-      Le solde initial est le point de départ du calcul : solde actuel = solde initial + revenus −
-      dépenses ± virements.
+      Le solde initial est le point de départ du calcul : solde actuel = solde initial + entrées −
+      sorties d’argent ± virements.
     </p>
 
     <ul class="grid grid-cols-[repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-4">

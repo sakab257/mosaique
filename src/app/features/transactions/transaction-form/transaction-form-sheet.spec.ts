@@ -87,7 +87,7 @@ describe('TransactionFormSheet', () => {
     expect(text()).toContain('supérieur à 0');
   });
 
-  it('crée une dépense avec sa sous-catégorie', async () => {
+  it('crée une sortie d’argent avec sa sous-catégorie', async () => {
     await open();
     await type(amountInput(), '54,3');
     await choose(selects()[1], 'grp-alimentation');
@@ -111,12 +111,34 @@ describe('TransactionFormSheet', () => {
     expect(close).toHaveBeenCalledWith(true);
   });
 
-  it('ne propose que les catégories de revenus pour un revenu', async () => {
+  it('ne propose que les catégories d’entrées pour une entrée d’argent', async () => {
     await open();
-    await pickType('Revenu');
+    await pickType('Entrée d’argent');
     const options = [...selects()[1].options].map((o) => o.textContent?.trim());
     expect(options).toContain('Revenus');
     expect(options).not.toContain('Alimentation');
+  });
+
+  it('présélectionne l’unique catégorie d’entrée d’argent et permet d’enregistrer', async () => {
+    await open();
+    await pickType('Entrée d’argent');
+    const select = selects()[1];
+    expect(select.value).toBe('grp-revenus');
+    expect(text()).toContain('Revenus');
+    await type(amountInput(), '35');
+    await submit();
+    expect(TestBed.inject(TransactionsStore).all()[0]).toMatchObject({
+      type: 'income',
+      amount: 3500,
+      groupId: 'grp-revenus',
+    });
+  });
+
+  it('sans catégorie choisie, l’option d’attente est réellement sélectionnée', async () => {
+    await open();
+    const select = selects()[1];
+    expect(select.selectedIndex).toBe(0);
+    expect(select.value).toBe('');
   });
 
   it('un virement exige deux comptes différents', async () => {

@@ -24,7 +24,7 @@ export interface SegmentOption<T extends string> {
 }
 
 /**
- * Sélecteur à segments (Dépense / Revenu / Virement, type de compte…).
+ * Sélecteur à segments (Sortie / Entrée d’argent / Virement, type de compte…).
  * Sémantique radiogroup : Tab entre dans le groupe, flèches pour changer de valeur.
  */
 @Component({

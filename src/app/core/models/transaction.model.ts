@@ -27,7 +27,7 @@ export interface Transaction {
 }
 
 export const TRANSACTION_TYPE_LABELS: Record<TransactionType, string> = {
-  expense: 'Dépense',
-  income: 'Revenu',
+  expense: 'Sortie d’argent',
+  income: 'Entrée d’argent',
   transfer: 'Virement',
 };

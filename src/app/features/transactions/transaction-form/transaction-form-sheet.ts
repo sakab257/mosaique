@@ -87,8 +87,8 @@ const TITLES: Record<Mode, string> = {
 };
 
 const TYPE_OPTIONS: readonly SegmentOption<TransactionType>[] = [
-  { value: 'expense', label: 'Dépense', color: SEMANTIC.expense },
-  { value: 'income', label: 'Revenu', color: SEMANTIC.income },
+  { value: 'expense', label: 'Sortie d’argent', color: SEMANTIC.expense },
+  { value: 'income', label: 'Entrée d’argent', color: SEMANTIC.income },
   { value: 'transfer', label: 'Virement', color: SEMANTIC.transfer },
 ];
 
@@ -417,7 +417,10 @@ export class TransactionFormSheet {
           validators: [Validators.required],
         }),
         toAccountId: new FormControl(source.toAccountId ?? '', { nonNullable: true }),
-        groupId: new FormControl(source.groupId ?? '', { nonNullable: true }),
+        groupId: new FormControl(
+          source.groupId ?? (this.data.transaction || rule ? '' : this.soleGroupId(type)),
+          { nonNullable: true },
+        ),
         subcategoryId: new FormControl(source.subcategoryId ?? '', { nonNullable: true }),
         date: new FormControl(dateOf(dateTime), {
           nonNullable: true,
@@ -447,10 +450,21 @@ export class TransactionFormSheet {
         const other = this.accounts.accounts().find((a) => a.id !== c.accountId.value);
         c.toAccountId.setValue(other?.id ?? '');
       }
-    } else if (group && group.kind !== type) {
-      c.groupId.setValue('');
-      c.subcategoryId.setValue('');
+    } else {
+      if (group && group.kind !== type) {
+        c.groupId.setValue('');
+        c.subcategoryId.setValue('');
+      }
+      // Une seule catégorie possible (souvent « Revenus » pour une entrée) : présélectionnée.
+      if (!c.groupId.value) c.groupId.setValue(this.soleGroupId(type));
     }
+  }
+
+  /** Identifiant de l'unique groupe du type, ou '' s'il y en a zéro ou plusieurs. */
+  private soleGroupId(type: TransactionType): string {
+    if (type === 'transfer') return '';
+    const groups = this.categories.groupsOfKind(type);
+    return groups.length === 1 ? groups[0].id : '';
   }
 
   private toDraft(): TransactionDraft {

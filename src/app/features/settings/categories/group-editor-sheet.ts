@@ -39,8 +39,8 @@ interface SubRow {
 }
 
 const KIND_OPTIONS: readonly SegmentOption<CategoryKind>[] = [
-  { value: 'expense', label: 'Dépenses' },
-  { value: 'income', label: 'Revenus' },
+  { value: 'expense', label: 'Sorties d’argent' },
+  { value: 'income', label: 'Entrées d’argent' },
 ];
 
 let nextKey = 0;
@@ -51,7 +51,7 @@ let nextKey = 0;
   imports: [Sheet, Segmented, CategoryAvatar, Icon, Button, IconButton],
   template: `
     <app-sheet [title]="editing ? 'Modifier le groupe' : 'Nouveau groupe'">
-      <form class="flex flex-col gap-4" (ngSubmit)="save()" novalidate>
+      <form class="flex flex-col gap-4" (submit)="save($event)" novalidate>
         <div class="flex items-center gap-3.5">
           <app-category-avatar [icon]="icon()" [color]="color()" size="xl" />
           <label
@@ -237,7 +237,9 @@ export class GroupEditorSheet {
     this.subs.update((list) => list.filter((s) => s.key !== key));
   }
 
-  protected save(): void {
+  /** Enregistre ; bloque l'envoi natif du formulaire (qui rechargerait la page). */
+  protected save(event: SubmitEvent): void {
+    event.preventDefault();
     this.submitted.set(true);
     if (this.nameError()) return;
     const subs: SubcategoryDraft[] = this.subs().map(({ id, name }) => ({ id, name }));

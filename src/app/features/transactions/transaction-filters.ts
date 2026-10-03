@@ -7,8 +7,8 @@ import { IconNamePipe } from '../../shared/ui/icon/icon-name.pipe';
 import { MonthSwitcher } from '../../shared/ui/month-switcher/month-switcher';
 
 const TYPE_OPTIONS: { value: TransactionType; label: string }[] = [
-  { value: 'expense', label: 'Dépenses' },
-  { value: 'income', label: 'Revenus' },
+  { value: 'expense', label: 'Sorties d’argent' },
+  { value: 'income', label: 'Entrées d’argent' },
   { value: 'transfer', label: 'Virements' },
 ];
 

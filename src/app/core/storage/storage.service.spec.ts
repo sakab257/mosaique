@@ -67,11 +67,24 @@ describe('AppStore', () => {
     expect(store.accounts().map((a) => a.name)).toEqual(['Cash', 'Carte bancaire', 'Banque']);
     expect(store.groups()).toHaveLength(9);
 
-    store.update((d) => ({ ...d, settings: { ...d.settings, monthlyIncomeReference: 250000 } }));
-    TestBed.tick();
+    // L'état initial est persisté dès la première ouverture.
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).accounts).toHaveLength(3);
 
+    // Écriture synchrone : sauvegardé dès le retour de `update`, sans cycle de rafraîchissement.
+    store.update((d) => ({ ...d, settings: { ...d.settings, monthlyIncomeReference: 250000 } }));
     const saved = JSON.parse(storage.getItem(STORAGE_KEY)!);
     expect(saved.settings.monthlyIncomeReference).toBe(250000);
+  });
+
+  it('n’écrit pas quand la mutation ne change rien', () => {
+    const storage = new MemoryStorage();
+    TestBed.configureTestingModule({
+      providers: [{ provide: BROWSER_STORAGE, useValue: storage }],
+    });
+    const store = TestBed.inject(AppStore);
+    const setItem = vi.spyOn(storage, 'setItem');
+    store.update((d) => d);
+    expect(setItem).not.toHaveBeenCalled();
   });
 
   it('recharge l’état enregistré', () => {

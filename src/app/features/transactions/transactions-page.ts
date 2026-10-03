@@ -96,7 +96,7 @@ import { toUpcomingView, upcomingTotal } from './upcoming-view';
           icon="receipt_long"
           size="md"
           [title]="'Aucune transaction en ' + (months.month() | dateLabel: 'month').toLowerCase()"
-          description="Vos dépenses, revenus et virements s’afficheront ici, groupés par jour."
+          description="Vos entrées et sorties d’argent et vos virements s’afficheront ici, groupés par jour."
         >
           <button type="button" appButton (click)="editor.openCreate()">
             <app-icon name="add" [size]="18" />
